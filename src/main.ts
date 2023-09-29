@@ -10,8 +10,8 @@ async function bootstrap() {
 
   // swagger
   const config = new DocumentBuilder()
-    .setTitle('Node 32 Pinterest')
-    .setDescription('A Pinterest Clone API')
+    .setTitle('Pinterest')
+    .setDescription('pinterest')
     .addBearerAuth
     // { type: 'http', scheme: 'bearer', bearerFormat: 'Token' },
     // 'access-token',

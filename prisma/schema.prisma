@@ -8,7 +8,7 @@ datasource db {
 }
 
 model comment {
-  comment_id   Int       @id
+  comment_id   Int       @id @default(autoincrement())
   user_id      Int?
   image_id     Int?
   comment_date DateTime? @db.Date
@@ -21,7 +21,7 @@ model comment {
 }
 
 model image {
-  image_id    Int          @id
+  image_id    Int       @id @default(autoincrement())
   user_id     Int?
   image_name  String?      @db.VarChar(255)
   url         String?      @db.VarChar(255)

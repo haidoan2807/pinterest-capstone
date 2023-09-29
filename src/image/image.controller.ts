@@ -9,6 +9,9 @@ import {
   UseGuards,
   Headers,
   HttpCode,
+  UseInterceptors,
+  UploadedFile,
+  Request,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -16,6 +19,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ImageService } from './image.service';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('image')
 @ApiBearerAuth()
@@ -24,12 +28,17 @@ import { UpdateImageDto } from './dto/update-image.dto';
 export class ImageController {
   constructor(private readonly imageService: ImageService) { }
 
-  @HttpCode(202)
-  @Post()
-  create(@Body() createImageDto: CreateImageDto) {
-    return this.imageService.create(createImageDto);
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadImage(@UploadedFile() file: Express.Multer.File, @Request() req) {
+      const createImageDto = {
+          image_name: file.filename,
+          url: file.path,
+          description: 'Some description',
+      };
+      return await this.imageService.create(createImageDto, req.user.id);
   }
-
+  
   @Get('/get-image')
   findAll() {
     return this.imageService.findAll();

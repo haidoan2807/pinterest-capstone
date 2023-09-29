@@ -38,29 +38,6 @@ export class UserController {
     return this.userService.getUserById(Number(userId));
   }
 
-  // NOTE: Upload an avatar
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: process.cwd() + '/public/img',
-        filename: (req, file, callback) =>
-          callback(null, new Date().getTime() + file.originalname),
-      }),
-    }),
-  )
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'Upload file',
-    type: FileUploadDto,
-  })
-  @HttpCode(202)
-  @Post('/upload-avatar/:userId')
-  uploadAvatar(
-    @UploadedFile() file: Express.Multer.File,
-    @Param('userId') userId: string,
-  ) {
-    return this.userService.uploadAvatar(file, Number(userId));
-  }
 
   @Put('/:userId')
   changeUser(@Body() body: User, @Param('userId') userId: string) {

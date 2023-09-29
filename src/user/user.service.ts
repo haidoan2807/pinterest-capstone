@@ -38,10 +38,9 @@ export class UserService {
         return { success: false, message: '404: User not found!' };
       }
 
-      const { user_id, email, full_name, age } = user;
+      const { email, full_name, age } = user;
 
       const updateUser: Prisma.userUpdateInput = {
-        user_id: Number(user_id),
         email,
         age,
         full_name,

@@ -1,21 +1,29 @@
 import { Injectable, Param } from '@nestjs/common';
 
 import { PrismaClient, image } from '@prisma/client';
-
+import { v4 as uuidv4 } from 'uuid';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class ImageService {
   prisma = new PrismaClient();
 
-  async create(createImageDto: CreateImageDto) {
-    const { image_id, user_id, image_name, url, description } = createImageDto;
+  async create(createImageDto: CreateImageDto, userId: number): Promise<image> {
+    const { image_name, url, description } = createImageDto;
+    return await this.prisma.image.create({
+        data: {
+            user_id: userId,
+            image_name,
+            url,
+            description,
+        }
+    });
+}
 
-    const file = await console.log('create image success', {});
 
-    return 'This action adds a new image';
-  }
 
   async findAll(): Promise<image[]> {
     const data = await this.prisma.image.findMany();
@@ -63,13 +71,26 @@ export class ImageService {
     const data = await this.prisma.image.findMany({
       where: {
         image_name: {
-          startsWith: imageName,
+          contains: imageName,
         },
       },
     });
-    if (!data) return `404: cannot find any image with this name`;
-    return data;
+  
+    if (data.length === 0) {
+      return {
+        success: false,
+        message: '404: cannot find any image with this name',
+        data: []
+      };
+    }
+  
+    return {
+      success: true,
+      message: 'Images found successfully',
+      data
+    };
   }
+  
 
   update(id: number, updateImageDto: UpdateImageDto) {
     return `This action updates a #${id} image`;
